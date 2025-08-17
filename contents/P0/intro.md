@@ -4,6 +4,8 @@ Back in the days when graphics are not prevalent, man interacted with computers 
 
 You might wonder why, in a time when GUI is commonplace, do we still need to learn the shell.
 
+---
+
 Primarily, as CS students, we frequently need to access low-level tools only available through the commandline. In addition, GUI is **slow**, which is why CLI(command line interface) tools are more often preferred by power users.
 
 ---

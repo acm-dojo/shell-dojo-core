@@ -4,6 +4,7 @@ import sys
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
+from rich.markdown import Markdown
 import termios
 import tty
 import select
@@ -159,11 +160,26 @@ def _import_module_from_path(path: Path):
 
 
 class Page:
-    def __init__(self, lines: List[str], level_name: str, index_within_level: int, global_index: int):
+    def __init__(
+        self,
+        level_name: str,
+        index_within_level: int,
+        global_index: int,
+        *,
+        lines: List[str] | None = None,
+        markdown: str | None = None,
+        side_padding: int = 2,
+    ):
         self.lines = lines
+        self.markdown = markdown
         self.level_name = level_name
         self.index_within_level = index_within_level
         self.global_index = global_index
+        self.side_padding = max(0, side_padding)
+
+    @property
+    def is_markdown(self) -> bool:
+        return self.markdown is not None
 
 
 def load_pages(contents_root: Path) -> tuple[list[Page], bool]:
@@ -190,13 +206,44 @@ def load_pages(contents_root: Path) -> tuple[list[Page], bool]:
         for idx, p in enumerate(raw_pages):
             if not p:
                 continue
+            # Markdown page representation: dict {"__markdown__": str}
+            if isinstance(p, dict) and "__markdown__" in p:
+                md_src = str(p["__markdown__"]).rstrip("\n")
+                side_padding = int(p.get("padding", 2)) if str(p.get("padding", "")).isdigit() else 2
+                pages.append(Page(level_name, idx, global_index, markdown=md_src, side_padding=side_padding))
+                global_index += 1
+                continue
             if not isinstance(p, list):
                 continue
-            # Ensure all elements are strings
             safe_lines = [str(line) for line in p]
-            pages.append(Page(safe_lines, level_name, idx, global_index))
+            pages.append(Page(level_name, idx, global_index, lines=safe_lines))
             global_index += 1
     return pages, show_splash_any
+
+
+def _render_markdown_page(console: Console, md_src: str, *, side_padding: int = 2, border_style: str = "yellow") -> None:
+    """Render a markdown page centered vertically within the panel."""
+    console.clear()
+    size = console.size
+    term_height = size.height - 1
+    md = Markdown(md_src, code_theme="monokai", hyperlinks=True, justify="left")
+    # Borders add 2, panel horizontal padding = side_padding * 2
+    inner_width = max(size.width - (2 + side_padding * 2), 20)
+    # Render lines to measure height
+    lines = console.render_lines(md, console.options.update(width=inner_width))
+    content_h = len(lines)
+    avail = max(term_height - 2, 0)
+    if content_h >= avail:
+        body = md
+    else:
+        top_pad = (avail - content_h) // 2
+        bottom_pad = avail - content_h - top_pad
+        blanks_top = [Text("") for _ in range(top_pad)]
+        blanks_bottom = [Text("") for _ in range(bottom_pad)]
+        from rich.console import Group
+        body = Group(*blanks_top, md, *blanks_bottom)
+    panel = Panel(body, border_style=border_style, expand=True, padding=(0, side_padding))
+    console.print(panel)
 
 def interactive_page_loop(console: Console, pages: list[Page]) -> None:
     if not pages:
@@ -209,8 +256,10 @@ def interactive_page_loop(console: Console, pages: list[Page]) -> None:
     def render_current():
         os.system('cls' if os.name == 'nt' else 'clear')
         page = pages[current]
-        lines = list(page.lines)
-        render_page(console, lines, pause=False, clear=True)
+        if page.is_markdown:
+            _render_markdown_page(console, page.markdown or "", side_padding=page.side_padding)
+        else:
+            render_page(console, list(page.lines or []), pause=False, clear=True)
 
     render_current()
 

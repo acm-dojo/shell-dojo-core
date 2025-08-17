@@ -4,6 +4,9 @@ Each builder returns a list[str] of Rich markup lines. The main engine will
 center these lines automatically using render_page().
 """
 
+from pathlib import Path
+from utils.markdown_pages import load_markdown_pages
+
 __level_name__ = "Why Shell?"
 __show_splash__ = True
 
@@ -38,7 +41,14 @@ def build_title_screen() -> list[str]:
     ]
 
 
+_intro_md = Path(__file__).parent / "intro.md"
+intro_pages_raw = load_markdown_pages(_intro_md) if _intro_md.exists() else []
+
+# Convert list-of-lines pages into markdown string entries so core can render with Rich Markdown
+intro_pages = [{"__markdown__": "\n".join(page), "padding": 6} for page in intro_pages_raw]
+
 __pages__ = [
     build_keybinding_page(),
     build_title_screen(),
+    *intro_pages,
 ]
