@@ -1,0 +1,9 @@
+[project]
+name = "shell-core"
+version = "0.1.0"
+description = "The core component of the Shell tutorial cli renderer"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "rich>=14.1.0",
+]
