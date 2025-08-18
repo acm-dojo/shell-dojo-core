@@ -7,7 +7,7 @@ center these lines automatically using render_page().
 from pathlib import Path
 from utils.markdown_pages import load_markdown_pages
 
-__level_name__ = "Why Shell?"
+__module_name__ = "Why Shell?"
 __show_splash__ = True
 
 

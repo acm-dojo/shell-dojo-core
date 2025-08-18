@@ -198,7 +198,7 @@ def load_pages(contents_root: Path) -> tuple[list[Page], bool]:
         except Exception as e:  # pragma: no cover - best effort
             print(f"Failed to import {export_file}: {e}", file=sys.stderr)
             continue
-        level_name = getattr(mod, "__level_name__", export_file.parent.name)
+        module_name = getattr(mod, "__module_name__", export_file.parent.name)
         show_splash_any = show_splash_any or bool(getattr(mod, "__show_splash__", False))
         raw_pages = getattr(mod, "__pages__", [])
         if not isinstance(raw_pages, list):
@@ -210,13 +210,13 @@ def load_pages(contents_root: Path) -> tuple[list[Page], bool]:
             if isinstance(p, dict) and "__markdown__" in p:
                 md_src = str(p["__markdown__"]).rstrip("\n")
                 side_padding = int(p.get("padding", 2)) if str(p.get("padding", "")).isdigit() else 2
-                pages.append(Page(level_name, idx, global_index, markdown=md_src, side_padding=side_padding))
+                pages.append(Page(module_name, idx, global_index, markdown=md_src, side_padding=side_padding))
                 global_index += 1
                 continue
             if not isinstance(p, list):
                 continue
             safe_lines = [str(line) for line in p]
-            pages.append(Page(level_name, idx, global_index, lines=safe_lines))
+            pages.append(Page(module_name, idx, global_index, lines=safe_lines))
             global_index += 1
     return pages, show_splash_any
 
