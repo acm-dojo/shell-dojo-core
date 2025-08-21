@@ -5,13 +5,19 @@ center these lines automatically using render_page().
 """
 
 from pathlib import Path
-from utils.markdown_pages import load_markdown_pages
+from utils.pages import (
+    lines_page,
+    markdown_file,
+    composite_page,
+    prompt_block,
+    syntax_block,
+)
 
 __module_name__ = "Why Shell?"
 __show_splash__ = True
 
 
-def build_keybinding_page() -> list[str]:
+def build_keybinding_page():
     mapping = {
         "←": "Navigate previous page",
         "→": "Navigate next page",
@@ -32,20 +38,16 @@ def build_keybinding_page() -> list[str]:
         "",
         "[dim]Use → to navigate to the next screen[/dim]"
     ])
-    return lines
+    return lines_page(lines)
 
 
-def build_title_screen() -> list[str]:
-    return [
-        "[bold yellow]Why Shell?[/bold yellow]"
-    ]
+def build_title_screen():
+    return lines_page(["[bold yellow]Why Shell?[/bold yellow]"])
 
 
 _intro_md = Path(__file__).parent / "intro.md"
-intro_pages_raw = load_markdown_pages(_intro_md) if _intro_md.exists() else []
+intro_pages = markdown_file(_intro_md, padding=6) if _intro_md.exists() else []
 
-# Convert list-of-lines pages into markdown string entries so core can render with Rich Markdown
-intro_pages = [{"__markdown__": "\n".join(page), "padding": 6} for page in intro_pages_raw]
 
 __pages__ = [
     build_keybinding_page(),

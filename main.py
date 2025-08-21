@@ -11,7 +11,8 @@ import termios
 import tty
 import select
 import importlib.util
-from typing import List
+from typing import List, Iterable, Sequence, cast
+from utils.pages import PageData
 
 ANSI_HIDE_CURSOR = "\033[?25l"
 ANSI_SHOW_CURSOR = "\033[?25h"
@@ -161,35 +162,12 @@ def _import_module_from_path(path: Path):
     raise ImportError(f"Cannot import module from {path}")
 
 
-class Page:
-    def __init__(
-        self,
-        level_name: str,
-        index_within_level: int,
-        global_index: int,
-        *,
-        lines: List[str] | None = None,
-        markdown: str | None = None,
-        side_padding: int = 2,
-    ):
-        self.lines = lines
-        self.markdown = markdown
-        self.level_name = level_name
-        self.index_within_level = index_within_level
-        self.global_index = global_index
-        self.side_padding = max(0, side_padding)
-
-    @property
-    def is_markdown(self) -> bool:
-        return self.markdown is not None
-
-
-def load_pages(contents_root: Path) -> tuple[list[Page], bool]:
+def load_pages(contents_root: Path) -> tuple[list[PageData], bool]:
     """Discover export.py modules under contents and collect their pages.
 
     Returns (pages, any_show_splash_flag)
     """
-    pages: list[Page] = []
+    pages: list[PageData] = []
     show_splash_any = False
     global_index = 0
     if not contents_root.exists():
@@ -211,18 +189,20 @@ def load_pages(contents_root: Path) -> tuple[list[Page], bool]:
         for idx, p in enumerate(raw_pages):
             if not p:
                 continue
-            # Markdown page representation: dict {"__markdown__": str}
-            if isinstance(p, dict) and "__markdown__" in p:
-                md_src = str(p["__markdown__"]).rstrip("\n")
-                side_padding = int(p.get("padding", 2)) if str(p.get("padding", "")).isdigit() else 2
-                pages.append(Page(module_name, idx, global_index, markdown=md_src, side_padding=side_padding))
+            if isinstance(p, PageData):
+                pages.append(p)
                 global_index += 1
                 continue
-            if not isinstance(p, list):
+            if isinstance(p, dict) and "__markdown__" in p:  # legacy dict form
+                md_src = str(p["__markdown__"]).rstrip("\n")
+                side_padding = int(p.get("padding", 2)) if str(p.get("padding", "")).isdigit() else 2
+                pages.append(PageData("markdown", md_src, padding=side_padding, title=module_name))
+                global_index += 1
                 continue
-            safe_lines = [str(line) for line in p]
-            pages.append(Page(module_name, idx, global_index, lines=safe_lines))
-            global_index += 1
+            if isinstance(p, list):  # legacy list-of-lines
+                safe_lines = [str(line) for line in p]
+                pages.append(PageData("lines", safe_lines, title=module_name))
+                global_index += 1
     return pages, show_splash_any
 
 
@@ -296,7 +276,31 @@ def _render_markdown_page(console: Console, md_src: str, *, side_padding: int = 
     panel = Panel(body, border_style=border_style, expand=True, padding=(0, side_padding))
     console.print(panel)
 
-def interactive_page_loop(console: Console, pages: list[Page]) -> None:
+def _render_lines_page(console: Console, lines: Sequence[str], *, padding: int = 2, border_style: str = "yellow") -> None:
+    render_page(console, list(lines), pause=False, border_style=border_style, clear=True)
+
+
+def _render_composite_page(console: Console, blocks: Iterable, *, padding: int = 2, border_style: str = "yellow") -> None:
+    console.clear()
+    from rich.console import Group
+    group = Group(*list(blocks))
+    size = console.size
+    term_height = size.height - 1
+    inner_width = max(size.width - (2 + padding * 2), 20)
+    lines = console.render_lines(group, console.options.update(width=inner_width))
+    content_h = len(lines)
+    avail = max(term_height - 2, 0)
+    if content_h < avail:
+        top_pad = (avail - content_h) // 2
+        bottom_pad = avail - content_h - top_pad
+        blanks_top = [Text("") for _ in range(top_pad)]
+        blanks_bottom = [Text("") for _ in range(bottom_pad)]
+        group = Group(*blanks_top, group, *blanks_bottom)
+    panel = Panel(group, border_style=border_style, expand=True, padding=(0, padding))
+    console.print(panel)
+
+
+def interactive_page_loop(console: Console, pages: list[PageData]) -> None:
     if not pages:
         console.print("[red]No content pages found.[/red]")
         return
@@ -307,10 +311,14 @@ def interactive_page_loop(console: Console, pages: list[Page]) -> None:
     def render_current():
         os.system('cls' if os.name == 'nt' else 'clear')
         page = pages[current]
-        if page.is_markdown:
-            _render_markdown_page(console, page.markdown or "", side_padding=page.side_padding)
-        else:
-            render_page(console, list(page.lines or []), pause=False, clear=True)
+        if page.kind == "markdown":
+            _render_markdown_page(console, page.content if isinstance(page.content, str) else "", side_padding=page.padding)
+        elif page.kind == "lines":
+            lines_content = cast(List[str], page.content) if isinstance(page.content, list) else []
+            _render_lines_page(console, lines_content, padding=page.padding)
+        else:  # composite
+            blocks = page.content if isinstance(page.content, list) else []
+            _render_composite_page(console, blocks, padding=page.padding)
 
     render_current()
 
@@ -336,7 +344,8 @@ def interactive_page_loop(console: Console, pages: list[Page]) -> None:
 
 
 def main():
-    metadata = json.load(open("contents/metadata.json"))
+    with open("contents/metadata.json", "r", encoding="utf-8") as f:
+        metadata = json.load(f)
     os.system('cls' if os.name == 'nt' else 'clear')
     console = Console()
     hide_cursor = sys.stdout.isatty()
@@ -344,8 +353,7 @@ def main():
         if hide_cursor:
             sys.stdout.write(ANSI_HIDE_CURSOR)
             sys.stdout.flush()
-        # Load content pages
-        contents_root = Path(__file__).parent / "contents" / f"P{metadata["selected"]}"
+        contents_root = Path(__file__).parent / "contents" / f"P{metadata['selected']}"
         pages, any_show_splash = load_pages(contents_root)
         if any_show_splash:
             show_splash(console)
