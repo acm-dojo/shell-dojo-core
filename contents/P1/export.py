@@ -7,3 +7,6 @@ def build_title_screen() -> list[str]:
         f"[bold yellow]{__module_name__}[/bold yellow]"
     ]
 
+__pages__ = [
+    build_title_screen(),
+]

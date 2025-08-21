@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 import sys
@@ -183,7 +184,7 @@ class Page:
 
 
 def load_pages(contents_root: Path) -> tuple[list[Page], bool]:
-    """Discover export.py modules under contents/*/ and collect their pages.
+    """Discover export.py modules under contents and collect their pages.
 
     Returns (pages, any_show_splash_flag)
     """
@@ -192,7 +193,10 @@ def load_pages(contents_root: Path) -> tuple[list[Page], bool]:
     global_index = 0
     if not contents_root.exists():
         return pages, show_splash_any
-    for export_file in sorted(contents_root.glob("*/export.py")):
+    export_files = set()
+    export_files.update(contents_root.glob("export.py"))
+    export_files.update(contents_root.glob("*/export.py"))  # nested version
+    for export_file in sorted(export_files):
         try:
             mod = _import_module_from_path(export_file)
         except Exception as e:  # pragma: no cover - best effort
@@ -285,6 +289,7 @@ def interactive_page_loop(console: Console, pages: list[Page]) -> None:
 
 
 def main():
+    metadata = json.load(open("contents/metadata.json"))
     os.system('cls' if os.name == 'nt' else 'clear')
     console = Console()
     hide_cursor = sys.stdout.isatty()
@@ -293,7 +298,7 @@ def main():
             sys.stdout.write(ANSI_HIDE_CURSOR)
             sys.stdout.flush()
         # Load content pages
-        contents_root = Path(__file__).parent / "contents"
+        contents_root = Path(__file__).parent / "contents" / f"P{metadata["selected"]}"
         pages, any_show_splash = load_pages(contents_root)
         if any_show_splash:
             show_splash(console)
