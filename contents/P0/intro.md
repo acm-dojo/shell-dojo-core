@@ -1,34 +1,34 @@
-Back in the days when graphics are not prevalent, man interacted with computers using text-based interfaces we call **the commandline**. Users type in commands, which are interpreted by **the shell** before being forwarded to the underlying Operating System.
+在图形界面尚不普及的年代，人们通过我们称之为 **命令行（command line）** 的文本界面与计算机交互。用户输入命令，这些命令会先由 **shell** 解释，然后再转发给底层操作系统。
 
 ---
 
-You might wonder why, in a time when GUI is commonplace, do we still need to learn the shell.
+你可能会好奇：在 GUI 已经如此普及的今天，我们为什么还需要学习 shell？
 
 ---
 
-Primarily, as CS students, we frequently need to access low-level tools only available through the commandline. In addition, GUI is **slow**, which is why CLI(command line interface) tools are more often preferred by power users.
+首先，作为计算机专业的学生，我们经常需要使用只能通过命令行访问的底层工具。其次，GUI 往往 **很慢**，这就是为什么资深用户更偏爱 CLI（命令行界面）工具的原因。
 
 ---
 
-For many developers, **the shell is an art**. Mastering shell usage will boost your efficiency and deepen your understanding of computer systems. This is why we have developed this crash course:
-> To bridge the gap of shell usage, and to help you become a more proficient developer.
+对许多开发者来说，**shell 是一种技艺**。掌握 shell 的使用将显著提升你的效率，并加深你对计算机系统的理解。这正是我们开发这门速成课程的原因：
+> 弥合 shell 使用上的差距，帮助你成为一名更高效的开发者。
 
 ---
 
-In each level, you will learn new skills regarding shell usage or cli tools. Use what you have learnt to solve the challenges and obtain the **flag**, which looks like this:
+在每一个关卡中，你都会学习新的 shell 使用技巧或 CLI 工具。运用你所学的内容去解决挑战并获得 **flag**，它长这个样子：
 
 ```
 flag{...}
 ```
 
-Submit this flag in your browser to unlock the next level.
+在浏览器中提交这个 flag 以解锁下一关。
 
 ---
 
-For this introductory level, here is your flag:
+在这个入门关卡里，你的 flag 是：
 
 ```
 flag{welcome_to_the_shell_crash_course}
 ```
 
-Best wishes, and may the shell always be with you.
+祝一切顺利，愿 shell 常伴你左右。
