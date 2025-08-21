@@ -6,6 +6,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 from rich.markdown import Markdown
+import re
 import termios
 import tty
 import select
@@ -226,26 +227,72 @@ def load_pages(contents_root: Path) -> tuple[list[Page], bool]:
 
 
 def _render_markdown_page(console: Console, md_src: str, *, side_padding: int = 2, border_style: str = "yellow") -> None:
-    """Render a markdown page centered vertically within the panel."""
+    """Render a markdown page centered vertically within the panel.
+
+    Enhancement: allows embedding Rich markup tags (e.g. [yellow]text[/yellow]) directly
+    inside the markdown source. Rich's Markdown renderer does not interpret its own
+    markup language within markdown blocks, so we post-process the rendered lines:
+    
+    1. Render markdown to segments (for layout & wrapping).
+    2. Reconstruct each visual line as Text; if the original source line contained
+       Rich markup tags we re-parse that plain text with Text.from_markup, otherwise
+       we keep the styles produced by the Markdown renderer.
+    3. Apply vertical centering similar to the classic page renderer.
+
+    Limitations: markup inside fenced code blocks will not be interpreted (intentionally),
+    and complex nested style overlaps between markdown and markup favor explicit
+    markup tags (you *may* lose markdown-emphasis styling inside a tagged region).
+    """
     console.clear()
     size = console.size
     term_height = size.height - 1
+    # Detect code fence regions to avoid interpreting markup inside them
+    code_fence_pattern = re.compile(r"^```")
+    fence_lines: set[int] = set()
+    in_fence = False
+    # Pre-scan original source to mark fenced lines
+    original_lines = md_src.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    for i, line in enumerate(original_lines):
+        if code_fence_pattern.match(line.strip()):
+            in_fence = not in_fence
+            fence_lines.add(i)
+        elif in_fence:
+            fence_lines.add(i)
+
     md = Markdown(md_src, code_theme="monokai", hyperlinks=True, justify="left")
-    # Borders add 2, panel horizontal padding = side_padding * 2
     inner_width = max(size.width - (2 + side_padding * 2), 20)
-    # Render lines to measure height
-    lines = console.render_lines(md, console.options.update(width=inner_width))
-    content_h = len(lines)
+    # Render markdown to measure & get styled segments
+    rendered_line_segments = console.render_lines(md, console.options.update(width=inner_width))
+
+    # Pattern to detect presence of Rich markup tags
+    markup_tag_pattern = re.compile(r"\[[a-zA-Z][^\]]*?\].*?\[/[a-zA-Z][^\]]*?\]")
+
+    processed_lines: list[Text] = []
+    for visual_index, seg_list in enumerate(rendered_line_segments):
+        # Combine segments into Text preserving original styles as baseline
+        base_text = Text()
+        for seg in seg_list:
+            base_text.append(seg.text, seg.style)
+        # Heuristic: map visual lines back to original source lines (best-effort)
+        # If line contains markup tags and it's NOT inside a code fence, reparse it.
+        original_line = original_lines[visual_index] if visual_index < len(original_lines) else base_text.plain
+        if visual_index < len(original_lines) and visual_index not in fence_lines and markup_tag_pattern.search(original_line):
+            # Reparse markup; fallback to base_text on failure
+            try:
+                base_text = Text.from_markup(base_text.plain)
+            except Exception:  # pragma: no cover
+                pass
+        processed_lines.append(base_text)
+
+    content_h = len(processed_lines)
     avail = max(term_height - 2, 0)
-    if content_h >= avail:
-        body = md
-    else:
+    if content_h < avail:
         top_pad = (avail - content_h) // 2
         bottom_pad = avail - content_h - top_pad
-        blanks_top = [Text("") for _ in range(top_pad)]
-        blanks_bottom = [Text("") for _ in range(bottom_pad)]
-        from rich.console import Group
-        body = Group(*blanks_top, md, *blanks_bottom)
+        processed_lines = [Text("") for _ in range(top_pad)] + processed_lines + [Text("") for _ in range(bottom_pad)]
+
+    from rich.console import Group
+    body = Group(*processed_lines)
     panel = Panel(body, border_style=border_style, expand=True, padding=(0, side_padding))
     console.print(panel)
 
