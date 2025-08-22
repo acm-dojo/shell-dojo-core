@@ -134,7 +134,7 @@ def render_page(
 
 def show_splash(console: Console, *, pause: bool = True) -> None:
     """Display the splash screen using the generic page renderer."""
-    resource_path = Path(__file__).parent / "resources" / "shell.ascaii"
+    resource_path = Path(__file__).parent / "resources" / "shell.ascii"
     try:
         ascii_art = resource_path.read_text(encoding="utf-8")
     except OSError as e:
