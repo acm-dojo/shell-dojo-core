@@ -2,6 +2,7 @@ import json
 import os
 from pathlib import Path
 import sys
+import signal
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
@@ -11,20 +12,33 @@ import termios
 import tty
 import select
 import importlib.util
-from typing import List, Iterable, Sequence, cast
+from typing import List, Iterable, Sequence, cast, Callable, Optional, Dict, Any
 from utils.pages import PageData
 
 ANSI_HIDE_CURSOR = "\033[?25l"
 ANSI_SHOW_CURSOR = "\033[?25h"
 
 
-def _read_keys_no_echo(stop_on_enter: bool = True):
+def _read_keys_no_echo(
+    stop_on_enter: bool = True,
+    *,
+    resize_flag: Optional[Dict[str, Any]] = None,
+    on_resize: Optional[Callable[[], None]] = None,
+    poll_interval: float = 0.15,
+):
     """Read keys in raw/cbreak mode without echo; yield key (or escape sequence) strings.
 
-    Improvements over previous version:
+    Enhancements:
       * Robust escape sequence parsing with short timeout to capture variable-length CSI sequences
       * Does not block indefinitely if user presses bare ESC
-      * Uses select() to avoid over-reading which previously could desync rendering
+      * Periodically polls (``poll_interval``) so that external events (e.g., terminal resize)
+        can trigger a re-render via a shared ``resize_flag`` dict and ``on_resize`` callback.
+
+    Parameters:
+        stop_on_enter: If True, stop iteration upon Enter (used for paused screens)
+        resize_flag: Mutable dict containing a boolean-like ``pending`` key when a resize occurred
+        on_resize: Callback invoked (coalesced) when resize_flag["pending"] is truthy
+        poll_interval: Seconds for select() timeout enabling responsive resize redraws
     """
     if not sys.stdin.isatty():
         return
@@ -34,8 +48,20 @@ def _read_keys_no_echo(stop_on_enter: bool = True):
         # cbreak gives immediate char delivery but retains ISIG so Ctrl-C still works
         tty.setcbreak(fd)
         while True:
-            # Block until at least one byte
-            select.select([fd], [], [])
+            # Wait for input or timeout to check resize flag
+            try:
+                rlist, _, _ = select.select([fd], [], [], poll_interval)
+            except InterruptedError:  # pragma: no cover - interrupted by signal
+                rlist = []
+            if resize_flag and resize_flag.get("pending"):
+                resize_flag["pending"] = False
+                if on_resize:
+                    try:
+                        on_resize()
+                    except Exception:  # pragma: no cover - defensive
+                        pass
+            if not rlist:
+                continue
             ch = os.read(fd, 1).decode(errors="ignore")
             if not ch:
                 continue
@@ -320,10 +346,28 @@ def interactive_page_loop(console: Console, pages: list[PageData]) -> None:
             blocks = page.content if isinstance(page.content, list) else []
             _render_composite_page(console, blocks, padding=page.padding)
 
+    # --- Resize handling (SIGWINCH) ---
+    resize_state: Dict[str, Any] = {"pending": False}
+
+    def _sigwinch_handler(signum, frame):  # pragma: no cover - signal-driven
+        resize_state["pending"] = True
+
+    previous_handler = None
+    try:
+        previous_handler = signal.getsignal(signal.SIGWINCH)
+        signal.signal(signal.SIGWINCH, _sigwinch_handler)
+    except Exception:  # pragma: no cover - platform without SIGWINCH
+        resize_state = {}
+
     render_current()
 
     try:
-        for key in _read_keys_no_echo(stop_on_enter=False):
+        for key in _read_keys_no_echo(
+            stop_on_enter=False,
+            resize_flag=resize_state,
+            on_resize=render_current,
+            poll_interval=0.12,
+        ):
             if key in ("q", "Q"):
                 break
             if key in ("\x1b[D",):  # Left arrow
@@ -341,6 +385,12 @@ def interactive_page_loop(console: Console, pages: list[PageData]) -> None:
             # Ignore all other input silently
     except KeyboardInterrupt:
         pass
+    finally:
+        if previous_handler is not None:  # restore previous handler
+            try:  # pragma: no cover - best effort restore
+                signal.signal(signal.SIGWINCH, previous_handler)  # type: ignore[arg-type]
+            except Exception:
+                pass
 
 
 def main():
