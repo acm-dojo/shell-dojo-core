@@ -34,8 +34,11 @@ class LinesPage:
         # Horizontal center by padding with spaces; vertical center by blank lines
         text = Text()
         inner_width = max(width, 1)
+        # Post-process tokens then build Text
+        processed_src_lines = [_replace_flag_tag(line) for line in self._lines]
+        content_lines: List[Text] = [Text.from_markup(line) if line else Text("") for line in processed_src_lines]
+
         # compute vertical padding
-        content_lines: List[Text] = [Text.from_markup(line) if line else Text("") for line in self._lines]
         content_h = len(content_lines)
         avail = max(height, 0)
         if content_h < avail:
@@ -157,7 +160,9 @@ class MarkdownPage:
         self._src = source.rstrip("\n")
 
     def render(self, width: int, height: int) -> RenderableType:
-        src = _insert_space_after_punctuation(self._src)
+        # Apply token replacement first, then spacing normalization
+        src = _replace_flag_tag(self._src)
+        src = _insert_space_after_punctuation(src)
         md = Markdown(src, code_theme="monokai", hyperlinks=True, justify="left")
         # Render to lines, then apply vertical centering to mimic previous behavior
         from rich.console import Console
@@ -244,3 +249,32 @@ __all__ = [
     "MarkdownPage",
     "CompositePage",
 ]
+
+_FLAG_VALUE: str | None = None
+
+
+def _read_flag_value() -> str | None:
+    global _FLAG_VALUE
+    if _FLAG_VALUE is not None:
+        return _FLAG_VALUE
+    try:
+        flag_path = Path("/flag")
+        if flag_path.exists():
+            # Read and strip; keep single-line typical flag formats intact
+            value = flag_path.read_text(encoding="utf-8").strip()
+            _FLAG_VALUE = value
+            return value
+    except Exception:
+        # Silently ignore environment where /flag is unavailable
+        pass
+    _FLAG_VALUE = None
+    return None
+
+
+def _replace_flag_tag(text: str) -> str:
+    if "[flag]" not in text:
+        return text
+    val = _read_flag_value()
+    if not val:
+        return text
+    return text.replace("[flag]", val)
