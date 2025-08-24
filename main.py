@@ -1,4 +1,3 @@
-import json
 import os
 from pathlib import Path
 import sys
@@ -306,8 +305,7 @@ def interactive_page_loop(console: Console, pages: list[Page]) -> None:
 
 
 def main():
-    with open("contents/metadata.json", "r", encoding="utf-8") as f:
-        metadata = json.load(f)
+    challengeId = os.environ["DOJO_CH_ID"]
     os.system('cls' if os.name == 'nt' else 'clear')
     console = Console()
     hide_cursor = sys.stdout.isatty()
@@ -315,7 +313,7 @@ def main():
         if hide_cursor:
             sys.stdout.write(ANSI_HIDE_CURSOR)
             sys.stdout.flush()
-        contents_root = Path(__file__).parent / "contents" / f"P{metadata['selected']}"
+        contents_root = Path(__file__).parent / "contents" / challengeId
         pages, any_show_splash = load_pages(contents_root)
         if any_show_splash:
             show_splash(console)
