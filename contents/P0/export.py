@@ -8,9 +8,6 @@ from pathlib import Path
 from utils.pages import (
     lines_page,
     markdown_file,
-    composite_page,
-    prompt_block,
-    syntax_block,
 )
 
 __module_name__ = "Why Shell?"
