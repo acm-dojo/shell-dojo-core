@@ -224,6 +224,123 @@ def _render_markdown_page(console: Console, md_src: str, *, side_padding: int = 
     markup tags (you *may* lose markdown-emphasis styling inside a tagged region).
     """
     console.clear()
+    
+    # Preprocess: insert a space after punctuation if missing (outside code blocks/spans)
+    def _insert_space_after_punctuation(text: str) -> str:
+        # Helper to process a single non-code segment safely
+        def process_segment(seg: str) -> str:
+            if not seg:
+                return seg
+            result_chars: list[str] = []
+            i = 0
+            L = len(seg)
+            while i < L:
+                ch = seg[i]
+                # Skip obvious markdown image syntax: '![' should not become '! ['
+                if ch == '!' and i + 1 < L and seg[i + 1] == '[':
+                    result_chars.append(ch)
+                    i += 1
+                    continue
+                # Candidate punctuation set
+                if ch in ",.:;!?)]}，。":
+                    nxt = seg[i + 1] if i + 1 < L else ""
+                    # Do not alter markdown link dest opener: "](" should not become "] ("
+                    if ch == ']' and nxt == '(':
+                        result_chars.append(ch)
+                        i += 1
+                        continue
+                    # Don't insert space if next is whitespace or end
+                    if not nxt or nxt.isspace():
+                        result_chars.append(ch)
+                        i += 1
+                        continue
+                    prev = seg[i - 1] if i - 1 >= 0 else ""
+                    # Special-case '.' to avoid breaking decimals and domains/file.ext
+                    if ch == '.':
+                        if (prev.isalnum() and nxt.isalnum()):
+                            # e.g., example.com or 3.14
+                            result_chars.append(ch)
+                            i += 1
+                            continue
+                    # Special-case ':' to avoid breaking schemes like https://
+                    if ch == ':':
+                        # Look back to previous non-word separator for scheme
+                        j = i - 1
+                        while j >= 0 and (seg[j].isalnum() or seg[j] in ['+', '-', '.']):
+                            j -= 1
+                        scheme = seg[j + 1:i]
+                        if scheme in ("http", "https", "ftp") and nxt == '/':
+                            result_chars.append(ch)
+                            i += 1
+                            continue
+                    # Insert a single space if the next char is not punctuation we intentionally allow to stick
+                    result_chars.append(ch)
+                    # Avoid adding extra space before closing quotes or similar, keep simple: always add one space
+                    result_chars.append(' ')
+                    i += 1
+                    continue
+                # Default: copy
+                result_chars.append(ch)
+                i += 1
+            return "".join(result_chars)
+
+        # Process line by line with code-fence and inline-code awareness
+        lines = text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+        out_lines: list[str] = []
+        in_fence = False
+        fence_ticks = ""
+        for line in lines:
+            stripped = line.lstrip()
+            # toggle code fence if encountering starting/ending fence (support ``` or ~~~)
+            if stripped.startswith("```") or stripped.startswith("~~~"):
+                if not in_fence:
+                    in_fence = True
+                    fence_ticks = stripped[:3]
+                else:
+                    # only close if matching fence
+                    if stripped.startswith(fence_ticks):
+                        in_fence = False
+                        fence_ticks = ""
+                out_lines.append(line)
+                continue
+            if in_fence:
+                out_lines.append(line)
+                continue
+
+            # Handle inline code spans with backticks of any length
+            i = 0
+            L = len(line)
+            rebuilt: list[str] = []
+            while i < L:
+                if line[i] == '`':
+                    # count backticks
+                    start = i
+                    tick_count = 1
+                    i += 1
+                    while i < L and line[i] == '`':
+                        tick_count += 1
+                        i += 1
+                    # find closing run of same length
+                    end = i
+                    close_idx = line.find('`' * tick_count, end)
+                    if close_idx == -1:
+                        # no closing, treat rest as normal text
+                        rebuilt.append(process_segment(line[start:]))
+                        i = L
+                        break
+                    # keep the code span unchanged
+                    rebuilt.append(line[start:close_idx + tick_count])
+                    i = close_idx + tick_count
+                else:
+                    # accumulate until next backtick or end
+                    next_bt = line.find('`', i)
+                    chunk = line[i:] if next_bt == -1 else line[i:next_bt]
+                    rebuilt.append(process_segment(chunk))
+                    i = L if next_bt == -1 else next_bt
+            out_lines.append("".join(rebuilt))
+        return "\n".join(out_lines)
+
+    md_src = _insert_space_after_punctuation(md_src)
     size = console.size
     term_height = size.height - 1
     # Detect code fence regions to avoid interpreting markup inside them
