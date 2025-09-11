@@ -305,7 +305,19 @@ def interactive_page_loop(console: Console, pages: list[Page]) -> None:
 
 
 def main():
-    challengeId = os.environ["DOJO_CH_ID"]
+    try:
+        with open('/challenge/.config', 'r') as file:
+            challengeId = file.read()\
+                .replace("\n", "")\
+                .replace("\r", "")\
+                .replace(" ", "")
+    except FileNotFoundError:
+        print("Error: The file /challenge/.config was not found.")
+        return
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return
+    
     os.system('cls' if os.name == 'nt' else 'clear')
     console = Console()
     hide_cursor = sys.stdout.isatty()
