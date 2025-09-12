@@ -264,9 +264,9 @@ def _read_flag_value() -> str | None:
             value = flag_path.read_text(encoding="utf-8").strip()
             _FLAG_VALUE = value
             return value
-    except Exception:
-        # Silently ignore environment where /flag is unavailable
-        pass
+    except Exception as e:
+        # Raise instead for debugging
+        raise e
     _FLAG_VALUE = None
     return None
 
