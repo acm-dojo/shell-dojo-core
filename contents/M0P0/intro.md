@@ -28,7 +28,7 @@ flag{...}
 在这个入门关卡里，你的 flag 是：
 
 ```
-flag{welcome_to_the_shell_crash_course}
+[flag]
 ```
 
 祝一切顺利，愿 shell 常伴你左右。
