@@ -1,4 +1,4 @@
-"""Content export for level P0.
+"""Content export for level M0P0: intro/intro
 
 Each builder returns a list[str] of Rich markup lines. The main engine will
 center these lines automatically using render_page().
