@@ -4,7 +4,7 @@ The course is structured as a series of challenges. A key principle is to **merg
 
 ---
 
-### ## Challenge 1: Navigating the File System (Read-Only)
+### ## M1P0: Navigating the File System (Read-Only)
 
 This initial challenge focuses on viewing and moving around the file system without changing anything. It combines basic navigation commands.
 
@@ -18,7 +18,7 @@ This initial challenge focuses on viewing and moving around the file system with
 
 ---
 
-### ## Challenge 2: Manipulating Files & Directories (Write)
+### ## M1P1: Manipulating Files & Directories (Write)
 
 This challenge introduces commands that create, modify, and delete files and directories. It represents the "write" part of file system interaction.
 
@@ -30,7 +30,7 @@ This challenge introduces commands that create, modify, and delete files and dir
 
 ---
 
-### ## Challenge 3: Understanding Commands
+### ## M2P0: Understanding Commands
 
 This module shifts focus from file operations to the nature of commands themselves. The goal is for students to understand what happens when they type a command.
 
@@ -47,7 +47,7 @@ This module shifts focus from file operations to the nature of commands themselv
 
 ---
 
-### ## Challenge 4: The Shell Environment
+### ## M2P1: The Shell Environment
 
 This challenge covers the shell itself, including customization, configuration, and environment variables.
 
@@ -66,7 +66,7 @@ This challenge covers the shell itself, including customization, configuration, 
 
 ---
 
-### ## Challenge 5: Pipes and I/O Redirection
+### ## M3P0: Pipes and I/O Redirection
 
 This challenge focuses on the concept of I/O streams and how to manipulate them to chain commands together.
 
@@ -82,7 +82,7 @@ This challenge focuses on the concept of I/O streams and how to manipulate them 
 
 ---
 
-### ## Challenge 6: Users and Permissions
+### ## M4P0: Users and Permissions
 
 This challenge covers the multi-user nature of Linux systems, focusing on file permissions and administrative privileges.
 
@@ -94,7 +94,7 @@ This challenge covers the multi-user nature of Linux systems, focusing on file p
 
 ---
 
-### ## Challenge 7: Package Management (Skills for Power Users)
+### ## M5P0: Package Management (Skills for Power Users)
 
 The final challenge introduces how to install and manage software on a Linux system.
 
