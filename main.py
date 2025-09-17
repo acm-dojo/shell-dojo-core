@@ -305,19 +305,18 @@ def interactive_page_loop(console: Console, pages: list[Page]) -> None:
 
 
 def main():
-    # try:
-    #     with open('/challenge/.config', 'r') as file:
-    #         challengeId = file.read()\
-    #             .replace("\n", "")\
-    #             .replace("\r", "")\
-    #             .replace(" ", "")
-    # except FileNotFoundError:
-    #     print("Error: The file /challenge/.config was not found.")
-    #     return
-    # except Exception as e:
-    #     print(f"An error occurred: {e}")
-    #     return
-    challengeId = "M1P0"
+    try:
+        with open('/challenge/.config', 'r') as file:
+            challengeId = file.read()\
+                .replace("\n", "")\
+                .replace("\r", "")\
+                .replace(" ", "")
+    except FileNotFoundError:
+        print("Error: The file /challenge/.config was not found.")
+        return
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return
     
     os.system('cls' if os.name == 'nt' else 'clear')
     console = Console()
@@ -327,6 +326,44 @@ def main():
             sys.stdout.write(ANSI_HIDE_CURSOR)
             sys.stdout.flush()
         contents_root = Path(__file__).parent / "contents" / challengeId
+        # --- Card mode: render only __card__ and exit ---
+        if "--card" in sys.argv:
+            export_path = contents_root / "export.py"
+            if not export_path.exists():
+                console.print(f"[red]export.py not found under {contents_root}[/red]")
+                sys.exit(1)
+            try:
+                mod = _import_module_from_path(export_path)
+            except Exception as e:
+                console.print(f"[red]Failed to import card from {export_path}: {e}[/red]")
+                sys.exit(1)
+            card = getattr(mod, "__card__", None)
+            if not card:
+                console.print("[red]Error: __card__ not defined in export.py[/red]")
+                sys.exit(1)
+            # Normalize to Page protocol
+            if hasattr(card, "render") and callable(getattr(card, "render")):
+                page = cast(Page, card)
+            elif isinstance(card, dict) and "__markdown__" in card:
+                md_src = str(card["__markdown__"]).rstrip("\n")
+                page = pages_mod.markdown_page(md_src)
+            elif isinstance(card, list):
+                safe_lines = [str(line) for line in card]
+                page = pages_mod.lines_page(safe_lines)
+            else:
+                console.print("[red]Error: __card__ has unsupported type[/red]")
+                sys.exit(1)
+            size = console.size
+            inner_height = max(size.height - 1 - 2, 0)
+            inner_width = max(size.width - 6, 10)
+            try:
+                renderable = page.render(inner_width, inner_height)
+            except Exception as e:
+                renderable = Text(f"[red]Error rendering card: {e}[/red]")
+                _wrap_and_print(console, renderable)
+                sys.exit(1)
+            _wrap_and_print(console, renderable)
+            return
         pages, any_show_splash = load_pages(contents_root)
         if any_show_splash:
             show_splash(console)
