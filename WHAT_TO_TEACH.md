@@ -9,7 +9,6 @@
 - commands (Commanding Commands)
     - commands (On Commands)
     - more-commands (More On Commands)
-    - help (Finding Help)
     - environ (All About Shell)
 - pipes (A Piper's Dream)
     - io-basics (Input and Output)
