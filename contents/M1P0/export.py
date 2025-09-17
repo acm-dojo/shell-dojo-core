@@ -10,7 +10,7 @@ from utils.pages import (
     markdown_file,
 )
 
-__module_name__ = "Navigating the File System (I)"
+__module_name__ = "Navigation Basics"
 __show_splash__ = False
 
 
