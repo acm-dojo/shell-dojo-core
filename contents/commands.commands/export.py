@@ -1,5 +1,4 @@
-"""Content export for level M1P0.
-
+"""
 Each builder returns a list[str] of Rich markup lines. The main engine will
 center these lines automatically using render_page().
 """
@@ -10,7 +9,7 @@ from utils.pages import (
     markdown_file,
 )
 
-__module_name__ = "Navigation Basics"
+__module_name__ = "On Commands"
 __show_splash__ = False
 
 
