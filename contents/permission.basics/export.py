@@ -10,7 +10,7 @@ from utils.pages import (
     markdown_file,
 )
 
-__module_name__ = "Shell Environments"
+__module_name__ = "Permission Basics"
 __show_splash__ = False
 
 
