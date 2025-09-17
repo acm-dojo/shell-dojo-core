@@ -16,6 +16,6 @@
     - redirection (Redirecting Data)
     - pipes (Chaining And Piping)
 - permissions (Perceiving Permissions)
-    - *
+    - basics (Permission Basics, users, groups, and more)
 - packages (Super Cow Powers)
     - *
