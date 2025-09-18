@@ -4,4 +4,4 @@
 
 > **TIP** 你是否记得有一个选项通常可以让你看到一个指令的使用方法? 🤔
 
-> **TIP** 随时随地你都可以通过 `/challenge/card` 指令查看任务卡，用 `/challenge/tutorial` 指令查看教程.
+> **TIP** 随时随地你都可以通过 `/challenge/card` 指令查看任务卡, 用 `/challenge/tutorial` 指令查看教程.
