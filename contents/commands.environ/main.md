@@ -122,7 +122,7 @@ echo $USER
 
 ---
 
-你可以使用 export 命令创建自己的变量. 这使得变量对你从该 shell 运行的任何其他程序都可用. 
+你可以使用 export 命令创建自己的环境变量. 这使得变量对你从该 shell 运行的任何其他程序都可用. 
 
 ```bash
 export GREETING="Hello, World!"
@@ -130,15 +130,15 @@ export GREETING="Hello, World!"
 echo $GREETING
 ```
 
-就像Alias一样, 如果你希望你的变量是永久的, 你必须将 export 行添加到你的 ~/.bashrc 或 ~/.zshrc 文件中. 
+就像 `alias` 一样, 如果你希望你的变量是永久的, 你必须将 export 行添加到你的 ~/.bashrc 或 ~/.zshrc 文件中. 
 
-当然, 你也可以不加 `export`, 那么有什么区别呢? `export` 告诉 shell 这个变量对从该 shell 启动的任何子进程都是可用的. 如果你不使用 `export`, 变量只在当前 shell 会话中可用. 
+当然, 你也可以不加 `export`, 那么有什么区别呢? `export` 告诉 shell 这个变量对从该 shell 启动的任何子进程都是可用的. 如果你不使用 `export`, 变量只在当前 shell 会话中可用.
 
 ---
 
 ## 定制化
 
-好的, 让我们回到最激动人心的部分：**定制化**! 
+好的, 让我们回到激动人心的部分：**定制化**! 
 
 shell 可以通过许多方式定制, 从改变颜色到添加功能. 对我来说, 如果你想复制一个炫酷终端的外观, 最简单的方法是使用像 **Oh My Zsh**（当然, 你需要先安装zsh, 我们简称为 `omz`）这样的框架, 或者使用开箱即用就可定制的 **fish**. 
 
@@ -161,4 +161,4 @@ plugins=(git copyfile)
 source $ZSH/oh-my-zsh.sh
 ```
 
-现在你都可以理解它们了! `export` 命令设置环境变量, 告诉 shell 这个 omz 在哪里. `ZSH_THEME` 变量指定要使用的主题, `plugins` 数组列出要加载的插件. 最后, `source` 命令运行主要的 Oh My Zsh 脚本, 它读取所有这些设置并应用它们. 
+现在你都可以理解它们了! `export` 命令设置环境变量, 告诉 shell 这个 omz 在哪里. `ZSH_THEME` 变量指定要使用的主题, `plugins` 数组列出要加载的插件. 最后, `source` 命令运行主要的 Oh My Zsh 脚本, 它读取所有这些设置并应用它们.
