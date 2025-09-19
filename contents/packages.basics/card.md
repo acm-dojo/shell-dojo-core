@@ -6,4 +6,6 @@
 
 当你安装好 `cowsay` 包后, 请运行 `/challenge/moo` 指令来提交任务. 它将使用 `cowsay` 来显示你的 `flag`.
 
+> **TIP** 在本次挑战中, 我们开放了权限: 你可以使用 `sudo` 来运行 `apt` 指令!
+
 > **TIP** 随时随地你都可以通过 `/challenge/card` 指令查看任务卡, 用 `/challenge/tutorial` 指令查看教程.

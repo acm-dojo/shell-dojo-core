@@ -26,7 +26,7 @@ cp -r my_folder my_folder_copy
 
 与复制不同, `mv`的移动命令表现的更像剪切, 它可以把你的文件从源文件移到目标位置.
 
-改名如何呢?自然是可以的.
+改名如何呢? 自然是可以的. 这相当于 Windows 系统中的重命名.
 
 ```
 mv file.txt file_only.txt
