@@ -10,44 +10,23 @@ from utils.pages import (
     markdown_file,
 )
 
-__module_name__ = "Manipulating Files & Directories (Write)"
+__module_name__ = "Changing Folders"
 __show_splash__ = False
 
-
-def build_keybinding_page():
-    mapping = {
-        "←": "Navigate previous page",
-        "→": "Navigate next page",
-        "Ctrl+C": "Exit tutorial",
-    }
-    lines = [
-        "[bold white] Key Bindings [/bold white]",
-        ""
-    ]
-    pad_pre_len = max(len(key) for key in mapping.keys()) + 2
-    pad_post_len = max(len(description) for description in mapping.values()) + 2
-    for key, description in mapping.items():
-        pad_pre = ' ' * (pad_pre_len - len(key))
-        pad_post = ' ' * (pad_post_len - len(description))
-        lines.append(f"{pad_pre}[yellow]{key}[/yellow] {description}{pad_post}")
-    
-    lines.extend([
-        "",
-        "[dim]Use → to navigate to the next screen[/dim]"
-    ])
-    return lines_page(lines)
-
-
 def build_title_screen():
-    return lines_page(["[bold yellow]Manipulating Files & Directories (Write)[/bold yellow]"])
+    return lines_page(["[bold yellow]Changing Folders[/bold yellow]"])
 
 
 _intro_md = Path(__file__).parent / "main.md"
 intro_pages = markdown_file(_intro_md, padding=6) if _intro_md.exists() else []
+_card_md = Path(__file__).parent / "card.md"
+card_pages = markdown_file(_card_md, padding=6) if _card_md.exists() else []
 
 
 __pages__ = [
-    build_keybinding_page(),
     build_title_screen(),
     *intro_pages,
+    *card_pages,
 ]
+
+__card__ = card_pages[0]
