@@ -1,116 +1,98 @@
-大部分教授 Shell 技巧的教程都会从浏览文件系统开始,本教程也不例外.
 
-与你熟悉的 Windows 文件夹不同, 比起点点鼠标, 你只需要敲敲键盘就可以通过 shell 实现在文件系统中的遨游.
+在上一节中我们简要介绍了 shell 的命令行相关用法; 在上节首提到, shell 编程中的精髓有两点：一点是它奠定了脚本语言的基础，并实现了交互式命令；另一点就是管道(pipe)。
 
-那么,让我们开始这场遨游之旅吧.
-
----
-
-天地玄黄, 宇宙洪荒.
-
-茫茫文件中, 汝无所适从.
-
-于是神出手了, 神教给你命令 `pwd` .
+在本节中, 我们将会学习什么是管道.
 
 ---
 
-`pwd` 命令可以显示你当前所在的工作目录,也就是告诉你“现在在哪里”.
+管道的作用正如其名，就是将不同程序的输入和输出“连接”在一起，从而简化了许许多多重复繁杂的工作。
 
-你在终端输入:
+正如 Unix/Linux 哲学中反复强调的 Everything is a File, 输入和输出都是以文件的形式, 也就是某种 I/O 流的形式. 所以你可以选择任意连接不同程序的输入和输出, 比如我要将程序 A 的输出变成程序 B 的输入, 用管道的方式写出来就是 `A | B` 的形式.
+
+---
+
+比如之前我们讲到了可以使用文本编辑器打开一个文件，并查看它的内容。然而呢，如果仅仅只是要看一眼文件的内容，其实不必大动干戈，而且有很多命令可以帮我们完成这件事情。
+
+打印文件内容，无非就是将文件输出到终端上；最常用的命令是 `cat`。
+
+`cat` 不是猫, cat 是 `concatenate files and print on the standard output` 的缩写, 中文翻译\“输入输出重定向”，不过暂时我们可以理解成“将文件内容输出到屏幕上”(cast a file to screen).
+
+你可以这么使用:
 
 ```
-pwd
+# 查看单个文件内容
+cat file1.txt
+
+# 拼接文件内容
+cat file1.txt file2.txt > combined.txt
+
+# 显示合并后的文件内容(-n : 加上行号)
+cat -n combined.txt
 ```
 
-输出 :`/home/hacker`,这意味着你现在的工作目录是 `/home/hacker`.
-
-你很满意.
-
-> 旅人不知归途兮,惟求罗盘以远航.
-
 ---
 
-当你知道了自己现在的位置, 你自然也希望知道自己处在的文件夹中都有什么东西.
+再来举一个例子.
 
-于是神出手了,神教给你命令 `ls` .
+我们来说一些实际的事情。看过系统日志的同学们应该知道，那种日志……实在是太长了。如果我只想看特定的几种分类（指通过关键单词可以分类的情况），该怎么办呢？
 
----
-
-`ls`命令可以用来告诉你 “当前目录里都有什么东西”.
-
-`ls`后可以加上一些参数用以查看不同的信息,比如 `ls -a`,`ls -l` 等.
-
-在这里,`ls -a`可以查看文件夹下的隐藏文件；`ls -l`是查看文件夹下的详细信息.试试这个:
+首先做一些准备工作：
 
 ```
-ls -a -l
+logic:~$ dmesg > syslog
+logic:~$ less syslog
+[    0.000000] microcode: CPU0 microcode updated early to revision 0x1b, date = 2014-05-29
+[    0.000000] Initializing cgroup subsys cpuset
+[    0.000000] Initializing cgroup subsys cpu
+[    0.000000] Initializing cgroup subsys cpuacct
+:
 ```
 
-你很满意.
-
-> 我有了立足之处,而且我知道了,我为什么是我. 
-
 ---
 
-你学会了知道自己的方位------ `pwd` .
-
-你学会了知道自己所处的位置里包括了什么------ `ls` .
-
-但是你仍不满足.
-
-你希望自由的从一个方位, 切换到另一个.
-
-于是神出手了,神教给你命令 `cd` .
-
-> 人类的伟大是勇气的伟大,人类的赞歌是勇气的赞歌! 
-
----
-
-`cd` 全称 `Change Directory`,顾名思义,就是切换目录.
-
-`cd dir` 会进入目录 `dir` ,如果不写目录,则回到主目录.这里列举了几种 `cd` 的常见用法:
+这个时候倒是可以先键入 / 然后再打要搜索的单词，比如 Bluetooth ：
 
 ```
-cd              # 进入主目录 (也就是 /home/hacker, 这里 hacker 是你的用户名)
-cd ~            # 也是进入主目录 (~ 是 /home/hacker 的简写)
-cd ..           # 返回上一级目录
-cd -            # 返回上一次访问的目录,像“返回”按钮一样.
+[    4.419788] usb 3-1.3: Product: Bluetooth USB Host Controller
+[    4.419790] usb 3-1.3: Manufacturer: Atheros Communications
+[    4.419792] usb 3-1.3: SerialNumber: Alaska Day 2006
 ```
 
-你学会了如何自由自在地在文件中遨游.
-
-> 不要问我从哪里来,我的故乡在远方
+但是这种办法是交互式的，也就是说没有办法“自动化”。所以我们就需要一个“自动”的命令, 也就是命令 `grep`。
 
 ---
 
-你很满意.
+logic 的名字来源于上古时期的文本编辑器 ed 中的命令 g/re/p (globally search a regular expression and print)。所以它的工作就是查找匹配所有满足条件的行并把它们打印出来。语法是先加待搜索的单词，再跟上文件名，比如：
 
-直到你到达了 `/home/user/mio/kurisu/cirno` .
-
-你想要进入子目录 `mikoto` .
-
-你输入 `cd /home/user/mio/kurisu/cirno/mikoto` .
-
-你看着越来越长的路径,你知道,你需要神的帮助.
-
-于是神出手了,神教会了你相对路径.
-
----
-
-请你回忆在执行 `ls -a` 的时候, 目录下拥有这两个文件夹 `.` 和 `..`. 你又回忆起：在返回上级目录的时候, 你输入的是 `cd ..`.
-
-在神的启示下, 你明白了：当你使用 `cd` 的时候, 如果路径是 `/...` 的形态就从根目录开始, 否则就从你的 **当前目录** 开始计算. 当你要从 `/home/user/mio/kurisu/cirno` 到达子文件夹 `mikoto` 时, 你只需要输入：`cd mikoto` 或者 `cd ./mikoto`.
-
-同理：`cd .` `cd ..` 之所以能运行, 是因为每个文件夹中都有硬编码的 `.` `..` 文件夹, 指向当前和上级目录.
-
-> 路漫漫其修远兮, 吾将上下而求索
+```
+wang:~$ grep Bluetooth syslog 
+[    4.419788] usb 3-1.3: Product: Bluetooth USB Host Controller
+[   15.518235] Bluetooth: Core ver 2.20
+[   15.518261] Bluetooth: HCI device and connection manager initialized
+[   15.518266] Bluetooth: HCI socket layer initialized
+...
+```
 
 ---
 
-在神的帮助下, 你学会了
+简单来说, `grep` 命令用来从一堆文本中快速找到你想要的信息. 其格式是 `grep [选项] "关键词" 文件/目录`, 常见用法有:
 
-- `pwd` 来显示当前目录；
-- `ls` 来展示目录中的内容；
-- `cd` 来切换目录.
+```
+# 查找文件中包含 "error" 的行
+grep "error" logfile.txt
 
-神要考验你, 于是他给你一个任务：
+# 忽略大小写匹配
+grep -i "error" logfile.txt
+
+# 反向匹配：只显示不包含 "error" 的行
+grep -v "error" logfile.txt
+
+# 搜索多个关键词（用 | 分隔）
+grep -E "error|fail" logfile.txt
+```
+
+其实 `grep` 本身与重定向没有太大的关系; 但是它能够起到的模式匹配与筛选作用是无可替代的.
+
+---
+
+现在, 你需要完成的任务是:
