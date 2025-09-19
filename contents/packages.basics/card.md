@@ -1,28 +1,9 @@
-#!/mnt/sudo/bash
+## 任务卡
 
-# Check the number of arguments
-if [ "$#" -ne 1 ]; then
-    echo "Please pass exactly one argument to /challenge/run"
-    exit 1
-fi
+在这个任务中, 你需要使用 apt 安装 `cowsay` 包. 这个包可以让你在终端中看到一只可爱的奶牛说话.
 
-# Check if the argument is Muelsyse
-if [ "$1" != "Muelsyse" ]; then
-    echo "The only accepted argument is: Muelsyse"
-    exit 1
-fi
+由于 dojo 中没有网络环境, 我们为你准备了 `cowsay` 包的离线安装包. 你可以在 `/challenge/packages` 目录下找到它.
 
-# Check the current working directory
-if [ "$(pwd)" != "/challenge/.robin" ]; then
-    echo "You must be in the /challenge/.robin directory to run this script"
-    exit 1
-fi
+当你安装好 `cowsay` 包后, 请运行 `/challenge/submit` 指令来提交任务. 它将使用 `cowsay` 来显示你的 `flag`.
 
-# Check if /challenge/challenge_tmp/directory folder exists
-if [ ! -d "/challenge/challenge_tmp/directory" ]; then
-    echo "Missing directory: /challenge/challenge_tmp/directory"
-    exit 1
-fi
-
-echo "Correct! /challenge/challenge_tmp/directory detected and argument is valid."
-cat /flag
+> **TIP** 随时随地你都可以通过 `/challenge/card` 指令查看任务卡, 用 `/challenge/tutorial` 指令查看教程.
