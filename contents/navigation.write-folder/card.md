@@ -1,28 +1,9 @@
-#!/mnt/sudo/bash
+## 任务卡
 
-# Check the number of arguments
-if [ "$#" -ne 1 ]; then
-    echo "Please pass exactly one argument to /challenge/run"
-    exit 1
-fi
+要求在 `/challenge/challenge_tmp` 目录下新建文件夹 `directory`
 
-# Check if the argument is Muelsyse
-if [ "$1" != "Muelsyse" ]; then
-    echo "The only accepted argument is: Muelsyse"
-    exit 1
-fi
+然后用 文本编辑器查看 `/challenge/.robin` 中 `to_nano` 文件的内容.
 
-# Check the current working directory
-if [ "$(pwd)" != "/challenge/.robin" ]; then
-    echo "You must be in the /challenge/.robin directory to run this script"
-    exit 1
-fi
+最后在 `/challenge/.robin` 运行 `/challenge/run []`, []内填写上述文件的内容, 即能通关.
 
-# Check if /challenge/challenge_tmp/directory folder exists
-if [ ! -d "/challenge/challenge_tmp/directory" ]; then
-    echo "Missing directory: /challenge/challenge_tmp/directory"
-    exit 1
-fi
-
-echo "Correct! /challenge/challenge_tmp/directory detected and argument is valid."
-cat /flag
+> **TIP** 随时随地你都可以通过 `/challenge/card` 指令查看任务卡, 用 `/challenge/tutorial` 指令查看教程.
