@@ -9,11 +9,11 @@ from utils.pages import (
     markdown_file,
 )
 
-__module_name__ = "Package Management (Skills for Power Users)"
+__module_name__ = "Installing Packages"
 __show_splash__ = False
 
 def build_title_screen():
-    return lines_page(["[bold yellow]Package Management (Skills for Power Users)[/bold yellow]"])
+    return lines_page([f"[bold yellow]{__module_name__}[/bold yellow]"])
 
 
 _intro_md = Path(__file__).parent / "main.md"
