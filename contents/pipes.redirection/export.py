@@ -10,7 +10,7 @@ from utils.pages import (
     markdown_file,
 )
 
-__module_name__ = "Navigation Basics"
+__module_name__ = "Redirecting Data"
 __show_splash__ = False
 
 

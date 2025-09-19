@@ -10,7 +10,7 @@ from utils.pages import (
     markdown_file,
 )
 
-__module_name__ = "Navigation Basics"
+__module_name__ = "Input and Output"
 __show_splash__ = False
 
 
@@ -26,7 +26,7 @@ _card_pages = markdown_file(_card_md, padding=6) if _card_md.exists() else []
 __pages__ = [
     build_title_screen(),
     *_main_pages,
-    * _card_pages,
+    *_card_pages,
 ]
 
 __card__ = _card_pages[0]
