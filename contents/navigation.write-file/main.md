@@ -58,7 +58,3 @@ rm -r my_folder_backup
 ```
 rm -rf temp/
 ```
-
----
-
-现在, 你需要完成的任务是:
