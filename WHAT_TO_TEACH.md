@@ -17,5 +17,5 @@
 - permissions (Perceiving Permissions)
     - basics (Permission Basics, users, groups, and more)
 - packages (Super Cow Powers)
-    - basics (Installing Via APT)
-    - mirrors (Using Mirrors)
+    - basics (Installing Packages)
+    - * mirrors (Mirror Magic)
