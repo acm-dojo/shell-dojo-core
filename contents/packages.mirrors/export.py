@@ -1,4 +1,4 @@
-"""Content export for level P0.
+"""Content export for level M0P0: intro/intro
 
 Each builder returns a list[str] of Rich markup lines. The main engine will
 center these lines automatically using render_page().
@@ -10,8 +10,8 @@ from utils.pages import (
     markdown_file,
 )
 
-__module_name__ = "Package Management (Skills for Power Users)"
-__show_splash__ = False
+__module_name__ = "Why Shell?"
+__show_splash__ = True
 
 
 def build_keybinding_page():
@@ -39,10 +39,10 @@ def build_keybinding_page():
 
 
 def build_title_screen():
-    return lines_page(["[bold yellow]Package Management (Skills for Power Users)[/bold yellow]"])
+    return lines_page(["[bold yellow]Why Shell?[/bold yellow]"])
 
 
-_intro_md = Path(__file__).parent / "main.md"
+_intro_md = Path(__file__).parent / "intro.md"
 intro_pages = markdown_file(_intro_md, padding=6) if _intro_md.exists() else []
 
 
