@@ -1,4 +1,4 @@
-"""Content export for level M1P0.
+"""Content export for level permission basics.
 
 Each builder returns a list[str] of Rich markup lines. The main engine will
 center these lines automatically using render_page().
