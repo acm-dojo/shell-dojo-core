@@ -22,7 +22,7 @@ $ which cat
 于是, 你也可以通过输入完整路径来运行它们: `/usr/bin/cat file` 和直接输入 `cat file` 是一样的.
 
 
-> 还有一个指令 `whereis`. 它基于索引数据库搜索更多位置（可执行、源码、man 手册）, 并返回一系列相关文件；当你希望寻找多版本或定位 man 源时有用。与 `which` 不同, `which` 仅报告按 `PATH` 解析的第一个命令路径。
+> 还有一个指令 `whereis`. 它基于索引数据库搜索更多位置（可执行、源码、man 手册）, 并返回一系列相关文件; 当你希望寻找多版本或定位 man 源时有用. 与 `which` 不同, `which` 仅报告按 `PATH` 解析的第一个命令路径. 
 
 ---
 
@@ -44,7 +44,7 @@ PATH 中的每一个目录都是用冒号 `:` 分隔的.
 
 ---
 
-如果你的程序所在的目录不在 `PATH` 中, shell 就找不到它, 因此会提示 `command not found`. 你可以通过在当前 shell 中临时修改 `PATH` 来解决这个问题（仅对当前会话有效）。
+如果你的程序所在的目录不在 `PATH` 中, shell 就找不到它, 因此会提示 `command not found`. 你可以通过在当前 shell 中临时修改 `PATH` 来解决这个问题（仅对当前会话有效）. 
 
 ```bash
 export PATH=/path/to/your/program:$PATH

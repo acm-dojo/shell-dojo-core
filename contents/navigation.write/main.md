@@ -54,7 +54,7 @@ mv file.txt file_only.txt
 mv file_only.txt /home/user/target_dir
 ```
 
-这个操作等价于: `mv file_only.txt /home/user/target_dir/file_only.txt`（当目标是已存在的目录时）。
+这个操作等价于: `mv file_only.txt /home/user/target_dir/file_only.txt`（当目标是已存在的目录时）. 
 
 ---
 
@@ -75,4 +75,4 @@ rm -r my_folder_backup
 rm -rf temp/
 ```
 
-> ⚠️ 警告: `rm -rf` 具有不可逆风险；务必确认路径无误。
+> ⚠️ 警告: `rm -rf` 具有不可逆风险; 务必确认路径无误. 
