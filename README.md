@@ -19,16 +19,7 @@ source .venv/bin/activate
 
 ### Running the Interactive Tutorial
 
-To start the interactive tutorial interface:
-
-```bash
-export DOJO_CH_ID=<module_id> && python main.py
-```
-
-**Example:**
-```bash
-export DOJO_CH_ID=M0P0 && python main.py
-```
+This is not sufficient to run the tutorial within this repository. You need to clone the [shell-dojo](https://github.com/acm-dojo/shell-dojo) repository and follow the setup instructions there.
 
 ### Creating New Content
 
