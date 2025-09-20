@@ -24,7 +24,7 @@ cp -r my_folder my_folder_copy
 
 ---
 
-与复制不同, `mv`的移动命令表现的更像剪切, 它可以把你的文件从源文件移到目标位置.
+与复制不同, `mv` 的移动命令表现的更像剪切, 它可以把你的文件从源文件移到目标位置.
 
 改名如何呢? 自然是可以的. 这相当于 Windows 系统中的重命名.
 
@@ -35,10 +35,10 @@ mv file.txt file_only.txt
 也可以将文件移到某个指定路径.
 
 ```
-mv file_only.txt /home/user/hentai
+mv file_only.txt /home/user/target_dir
 ```
 
-这个操作等价于: `mv file.txt /home/user/hentai/file_only.txt`.
+这个操作等价于: `mv file_only.txt /home/user/target_dir/file_only.txt`（当目标是已存在的目录时）。
 
 ---
 
@@ -58,3 +58,5 @@ rm -r my_folder_backup
 ```
 rm -rf temp/
 ```
+
+> ⚠️ 警告: `rm -rf` 具有不可逆风险；务必确认路径无误，可先 `ls -ld -- temp/` 或在命令中加入 `-i` 交互确认。

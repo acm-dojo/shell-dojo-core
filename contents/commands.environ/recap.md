@@ -4,7 +4,7 @@
 
 - Shell 通过启动时读取 `~/.bashrc` / `~/.zshrc` 来“记住”配置;
 - 别名 (alias) 用 `alias name="command"` 定义, 可作为命令快捷方式, 只在当前会话生效, 要永久生效需写入 rc 配置文件并 `source` 重新加载;
-- 环境变量 (Environment Variables) 是被进程读取的键值设置, 常用的有 `SHELL`, `HOME`, `USER`, `PATH`
+- 环境变量 (Environment Variables) 是被进程读取的键值设置, 常用的有 `SHELL`, `HOME`, `USER`, `PATH`。
 
 ### 指令速查表
 

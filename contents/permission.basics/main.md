@@ -8,9 +8,9 @@ Linux 是一个多用户系统, 这意味着它内置了一套规则来防止文
 
 **用户** (user)：一个独立的账户. 当你登录时, 你是以特定用户的身份行动. 最强大的用户称为 root（或超级用户）, 它对整个系统拥有几乎不受限制的访问能力. 
 
-**用户组** (group)：用户的集合. 用户组使得同时管理多个用户的权限变得容易. 一个常见例子是用于网页服务的 www-data 组, 倘若你host过网站的话你会听说过这一点, 你不希望每个普通用户都能改网站文件；同样, 你也不希望像 Nginx、Caddy 这样的网页服务器进程能访问你的私人文件. [这篇文章很好地解释了这点](https://askubuntu.com/questions/873839/what-is-the-www-data-user). 
+**用户组** (group)：用户的集合. 用户组使得同时管理多个用户的权限变得容易. 一个常见例子是用于网页服务的 `www-data` 组, 你不希望每个普通用户都能改网站文件；同样, 也不希望 Nginx、Caddy 等服务进程访问你的私人文件. [这篇文章有更详细的说明](https://askubuntu.com/questions/873839/what-is-the-www-data-user). 
 
-你可以使用 whoami 命令查看你是谁. 
+你可以使用 `whoami` 命令查看你是谁. 
 
 ```bash
 whoami
@@ -160,7 +160,7 @@ sudo apt update
 sudo su
 ```
 
-这相当于用 sudo 以提权方式运行 `su`；在不带参数时, `su` 默认切到 root. 
+这相当于用 `sudo` 以提权方式运行 `su`；在不带参数时, `su` 默认切到 root. 
 
 > Tips: 直接运行 su（不带 sudo）默认会询问“目标用户的密码”（通常是 root 的密码）. 在 Ubuntu 上, root 账户默认可能被锁定, 此时 su 不可用, 但 sudo su 会要求你输入当前用户的密码（前提是你在 sudoers 中）. 
 

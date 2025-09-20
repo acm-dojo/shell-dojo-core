@@ -19,7 +19,7 @@ mkdir -p parent_folder/child_folder
 
 ---
 
-`touch` 命令可以让你在当前工作目录下创建一个新的文件.
+`touch` 命令可以让你在当前工作目录下创建一个新的空文件, 若文件已经存在，则更新已有文件的修改时间戳。
 
 你在终端输入:
 
@@ -27,7 +27,7 @@ mkdir -p parent_folder/child_folder
 touch file.txt
 ```
 
-文件夹里就新建了一个 file.txt.
+文件夹里就新建了一个 `file.txt`（若文件原本存在, 仅更新时间戳, 内容不变）。
 
 新文件已然生成, 但是我该如何查看?
 
@@ -35,7 +35,7 @@ touch file.txt
 
 ---
 
-wsl 自带文本编辑器, 你可以用 vim file.txt 打开, 也可以用 nano file.txt 打开.
+多数 Linux 发行版（包括你在 WSL 里安装的 Ubuntu）自带终端文本编辑器, 你可以用 `vim file.txt` 打开, 也可以用 `nano file.txt` 打开。
 
 比起 nano, vim 相对更反人类, 上手也更难, 所以建议新手都用 nano 打开.
 
@@ -43,8 +43,6 @@ wsl 自带文本编辑器, 你可以用 vim file.txt 打开, 也可以用 nano f
 
 比如 `^X Exit`, 你只需要按住 `Ctrl+X`, 就可以退出, 学习成本很低.
 
-值得一提的是, 假如想要打开的文件在路径里不存在, 比如 `nano no_exist.txt`
+值得一提的是, 假如想要打开的文件在路径里不存在, 比如 `nano no_exist.txt`，文本编辑器通常会在保存时新建该文件。
 
-文本编辑器会帮助你新建一个文件;
-
-从这个角度, `touch` 这个命令是一个鸡肋的命令.
+> `touch` 并不鸡肋——在脚本里批量创建空文件、确保文件存在或仅更新时间戳时非常实用；编辑器“新建文件”的行为需你手动保存且遇到只读目录会失败。
