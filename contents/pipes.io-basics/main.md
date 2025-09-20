@@ -55,15 +55,6 @@ grep "error" logfile.txt
 # 忽略大小写匹配
 grep -i "error" logfile.txt
 
-# 反向匹配：只显示不包含 "error" 的行 (在 log 排查的时候非常有用! 🎉)
-grep -v "error" logfile.txt
-
-# 搜索多个关键词 (用 | 分隔)
-grep -E "error|fail" logfile.txt
-
-# 显示行号 (-n 的位置无所谓)
-grep -n "error" logfile.txt
-
 # 显示匹配的次数
 grep -c "error" logfile.txt
 ```
