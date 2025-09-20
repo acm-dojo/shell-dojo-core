@@ -19,6 +19,8 @@ def build_title_screen():
 
 _intro_md = Path(__file__).parent / "main.md"
 intro_pages = markdown_file(_intro_md, padding=6) if _intro_md.exists() else []
+_recap_md = Path(__file__).parent / "recap.md"
+recap_pages = markdown_file(_recap_md, padding=6) if _recap_md.exists() else []
 _card_md = Path(__file__).parent / "card.md"
 card_pages = markdown_file(_card_md, padding=6) if _card_md.exists() else []
 
@@ -26,6 +28,7 @@ card_pages = markdown_file(_card_md, padding=6) if _card_md.exists() else []
 __pages__ = [
     build_title_screen(),
     *intro_pages,
+    *recap_pages,
     *card_pages,
 ]
 
