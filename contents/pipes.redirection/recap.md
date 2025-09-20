@@ -9,7 +9,7 @@
 ### 指令速查表
 
 - `pwd > file` : 将输出写文件;
-- `echo line >> file` : 末尾追加一行;
-- `cat < file` : 用文件作为输入;
+- `echo "this is the new line" >> file` : 末尾追加一行;
+- `cat < file` : 用文件作为 `cat` 命令的输入;
 - `cmd > out.txt 2> err.txt` : 分流 stdout/stderr;
 - `cmd &> all.txt` : 合并输出到同一文件.

@@ -8,9 +8,9 @@
 ### 指令速查表
 
 - `cat file` / `cat a b > c` : 查看/拼接;
-- `grep "pat" file` : 匹配行;
-- `grep -i "pat" file` : 忽略大小写;
-- `grep -c "pat" file` : 仅输出匹配行数.
+- `grep "something" file` : 匹配行;
+- `grep -i "something" file` : 忽略大小写;
+- `grep -c "something" file` : 仅输出匹配行数.
 
 ### 下集预告
 

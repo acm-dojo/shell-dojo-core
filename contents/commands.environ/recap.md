@@ -13,7 +13,7 @@
 - `source ~/.bashrc` / `source ~/.zshrc` : 重新加载配置;
 - `env` : 列出所有当前环境变量;
 
-### 进阶方向
+### 进阶
 
 - Oh My Zsh / powerlevel10k 主题与插件生态
 - `zsh-autosuggestions` 与 `zsh-syntax-highlighting` 提升交互体验

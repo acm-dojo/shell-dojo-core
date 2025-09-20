@@ -10,4 +10,5 @@
 
 - 备份源文件: `sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak` 或备份 `.sources` 格式;
 - 编辑源: 根据镜像站帮助页更新 `sources.list` 或 `ubuntu.sources`;
+- [清华源](https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/)、[中科大源](https://mirrors.ustc.edu.cn/help/ubuntu.html)、[交大源](https://mirror.sjtu.edu.cn)。
 - 刷新索引: `sudo apt update`.
