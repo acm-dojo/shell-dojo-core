@@ -13,9 +13,10 @@
 这会把 `命令A` 的标准输出传递给 `命令B` 的标准输入。让我们来看一个简单的例子：
 
 ```
-$ echo 'Hello World!' | cat
-Hello World!
+echo 'Hello World!' | cat
 ```
+
+它应当输出 `Hello World!`。
 
 这里发生了什么：
 1. `echo 'Hello World!'` 输出 "Hello World!"
@@ -32,7 +33,7 @@ Hello World!
 ---
 
 ```
-$ ps -A | grep bash
+ps -A | grep bash
 ```
 
 `ps -A` 列出所有正在运行的进程（你们不需要掌握它），`grep bash` 过滤出包含 "bash" 的行。这是极有用的，因为你电脑中可能运行这成千上万的进程。如果你只想看和 bash 相关的进程，管道就能帮你实现。
@@ -44,7 +45,7 @@ $ ps -A | grep bash
 你可以把多个命令串联起来：
 
 ```
-$ cat /var/log/syslog | grep ERROR | wc -l
+cat /var/log/syslog | grep ERROR | wc -l
 ```
 
 这里发生了什么：
