@@ -1,6 +1,6 @@
 ## 任务卡
 
-`/challenge/boookstore.log` 是助教 Bookstore 项目中截取出的日志文件, 你需要通过分析日志文件来完成本次任务:
+`/challenge/bookstore.log` 是助教 Bookstore 项目中截取出的日志文件, 你需要通过分析日志文件来完成本次任务:
 
 - 统计任何人切换 (SwitchUser) 到 **非root** 用户的次数, 并且将这个结果 **pipe** 给 `/challenge/submit` 指令来提交结果.
 
