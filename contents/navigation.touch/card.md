@@ -1,6 +1,10 @@
 ## 任务卡
 
-你当前的目录是你的主目录 `/home/hacker`. 请在该目录下创建一个名为 `fish` 的文件, 并在里面写入 "And so God intones: Let there be fish to touch.".
+你当前的目录是你的主目录 `/home/hacker`. 请在该目录下创建一个名为 `fish` 的文件, 并在里面写入:
+
+```
+And so God intones: Let there be fish to touch.
+```
 
 写入该文件后, 请运行 `/challenge/submit` 指令提交任务.
 
