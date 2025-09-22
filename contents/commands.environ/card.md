@@ -7,7 +7,7 @@
 2. 使用 `ll` 命令执行 `ls -la` 指令来列出当前目录下的所有文件详细信息.
 3. 令 `/challenge/bin` 处在环境变量 `PATH` 中, 以便你可以在任何地方运行内部的脚本.
 
-如果已经做好了以上两步, 请运行 `/challenge/submit` 获取flag. 
+如果已经做好了以上三步, 请运行 `/challenge/submit` 获取flag. 
 
 > 在配置完成后, 你可以运行 `source ~/.bashrc` 以应用更改.
 
